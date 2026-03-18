@@ -1,0 +1,120 @@
+# =============================================================================
+# Cyber-Kill-Chain Tracker: 위협 헌팅 KQL 쿼리 모음
+# Phase 4 - Kibana Discover / Alerts에서 사용
+# =============================================================================
+# 사용법: Kibana > Discover 또는 Alerts > Rules 섹션에서 복사-붙여넣기
+# 인덱스 패턴: log-nginx_access-*, log-auditd-*, log-system-*
+# =============================================================================
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [Nginx Access Log 기반 탐지] 인덱스: log-nginx_access-*
+# ─────────────────────────────────────────────────────────────────────────────
+
+# [WEB-001] Command Injection 탐지
+# DVWA Command Injection 공격 시 URL에 ;, &&, | 등이 포함됨
+request_uri: (*%3B* OR *%7C* OR *%26%26* OR *\;* OR *\|* OR *\&\&*)
+
+# [WEB-002] Path Traversal (디렉터리 트래버설) 탐지
+request_uri: (*../* OR *%2E%2E%2F* OR *..%2F*)
+
+# [WEB-003] SQL Injection 탐지
+request_uri: (*union+select* OR *UNION+SELECT* OR *select+*+from* OR *drop+table*)
+
+# [WEB-004] XSS (Cross-Site Scripting) 탐지
+request_uri: (*<script* OR *%3Cscript* OR *alert%28* OR *onerror%3D*)
+
+# [WEB-005] Web Shell 업로드/접근 탐지
+request_uri: (*.php* AND (*cmd* OR *exec* OR *shell* OR *backdoor*))
+
+# [WEB-006] HTTP 400번대 오류 폭증 (스캐닝/브루트포스 징후)
+http_status_code >= 400 AND http_status_code < 500
+
+# [WEB-007] 특정 IP의 단시간 대량 요청 (DoS/스캔)
+# → Kibana에서 client_ip 기준으로 Terms Aggregation 활용
+client_ip: "192.168.10.100"  # Attacker IP
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [Auditd 기반 탐지] 인덱스: log-auditd-*
+# ─────────────────────────────────────────────────────────────────────────────
+
+# [AUD-001] 특권 명령어 실행 탐지 (whoami, id, uname)
+# 공격자가 초기 침투 후 가장 먼저 실행하는 정찰 명령어
+execve_args: (*whoami* OR *id* OR *uname* OR *hostname*)
+
+# [AUD-002] 리버스 쉘 관련 명령어 탐지
+# nc(netcat), bash -i, python/perl 역방향 연결 시도
+execve_args: (*nc* OR *netcat* OR *bash+-i* OR *python+-c* OR */dev/tcp*)
+
+# [AUD-003] 권한 상승 시도 탐지
+# sudo, su, chmod +s (SUID 설정), chown root 등
+execve_args: (*sudo* OR *su+root* OR *chmod+4777* OR *chmod+u+s*)
+
+# [AUD-004] 중요 파일 접근 탐지 (민감 정보 열람)
+execve_args: (*/etc/passwd* OR */etc/shadow* OR */etc/sudoers*)
+
+# [AUD-005] Crontab 수정 탐지 (지속성 확보)
+execve_args: (*crontab* OR */etc/cron*)
+
+# [AUD-006] 웹쉘 생성/파일 드롭 탐지
+process_name: ("wget" OR "curl") AND execve_args: (*.php* OR *.sh*)
+
+# [AUD-007] SSH 키 파일 접근 탐지
+execve_args: (*authorized_keys* OR *id_rsa* OR *.ssh*)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [System Log 기반 탐지] 인덱스: log-system-*
+# ─────────────────────────────────────────────────────────────────────────────
+
+# [SYS-001] SSH 브루트포스 공격 탐지
+syslog_message: "Failed password"
+
+# [SYS-002] SSH 루트 로그인 성공 (매우 위험)
+syslog_message: "Accepted" AND syslog_message: "root"
+
+# [SYS-003] 공격자 IP에서의 SSH 인증 실패
+syslog_message: "Failed password" AND syslog_message: "192.168.10.100"
+
+# [SYS-004] sudo 권한 남용 탐지
+syslog_message: "sudo" AND syslog_message: "COMMAND"
+
+# [SYS-005] 계정 생성/삭제 이벤트 탐지
+syslog_message: ("useradd" OR "userdel" OR "usermod" OR "adduser")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [킬체인 단계별 복합 쿼리] 크로스 인덱스 분석용
+# ─────────────────────────────────────────────────────────────────────────────
+
+# [KC-001] Initial Access: DVWA Command Injection 시작점
+# 사용 인덱스: log-nginx_access-*
+# 타임라인 생성 시 가장 먼저 확인
+client_ip: "192.168.10.100" AND (request_uri: *cmd* OR tags: "web_attack_detected")
+
+# [KC-002] Execution: 웹서버에서 명령어 실행 확인
+# 사용 인덱스: log-auditd-*  |  Web 서버 호스트 필터링 필요
+tags: "command_execution" AND host.hostname: "web-server"
+
+# [KC-003] Privilege Escalation: sudo/SUID 관련 이벤트
+# 사용 인덱스: log-auditd-*
+execve_args: (*sudo* OR *chmod+s* OR *SUID*)
+
+# [KC-004] Lateral Movement: DB 서버 접근 시도
+# 사용 인덱스: log-auditd-* + log-system-*  |  Core 서버 필터링 필요
+host.hostname: "core-server" AND (execve_args: *mysql* OR syslog_message: *3306*)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# [통계/시각화용 집계 쿼리] Kibana Lens/Visualize에서 활용
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 상위 공격 IP TOP 10 → client_ip 기준 Count 집계 (Bar chart)
+*  # 전체 조회 후 Kibana에서 Terms Aggregation by client_ip
+
+# 시간대별 공격 빈도 → @timestamp 기준 Date Histogram
+tags: "web_attack_detected"
+
+# HTTP 상태 코드 분포 → http_status_code Terms Aggregation (Pie chart)
+http_status_code: *

@@ -1,0 +1,33 @@
+==========================================
+ Logstash 설정 검증 및 업데이트
+==========================================
+
+[1] 현재 설정 백업...
+    완료: beats.conf.bak_20260318_043502
+
+[2] Elasticsearch CA 인증서 확인...
+    [OK] CA 인증서 복사 완료
+
+[3] 새 설정 파일 적용...
+    완료
+
+[4] Logstash 설정 문법 검증...
+Using bundled JDK: /usr/share/logstash/jdk
+WARNING: Could not find logstash.yml which is typically located in $LS_HOME/config or /etc/logstash. You can specify the path using --path.settings. Continuing using the defaults
+Could not find log4j2 configuration at path /usr/share/logstash/config/log4j2.properties. Using default config which logs errors to the console
+[WARN ] 2026-03-18 04:36:06.151 [main] runner - Starting from version 9.0, running with superuser privileges is not permitted unless you explicitly set 'allow_superuser' to true, thereby acknowledging the possible security risks
+[WARN ] 2026-03-18 04:36:06.180 [main] runner - NOTICE: Running Logstash as a superuser is strongly discouraged as it poses a security risk. Set 'allow_superuser' to false for better security.
+[WARN ] 2026-03-18 04:36:06.191 [main] runner - 'pipeline.buffer.type' setting is not explicitly defined.Before moving to 9.x set it to 'heap' and tune heap size upward, or set it to 'direct' to maintain existing behavior.
+[INFO ] 2026-03-18 04:36:06.193 [main] runner - Starting Logstash {"logstash.version"=>"8.19.12", "jruby.version"=>"jruby 9.4.9.0 (3.1.4) 2024-11-04 547c6b150e OpenJDK 64-Bit Server VM 21.0.9+10-LTS on 21.0.9+10-LTS +indy +jit [x86_64-linux]"}
+[INFO ] 2026-03-18 04:36:06.197 [main] runner - JVM bootstrap flags: [-Xms1g, -Xmx1g, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djruby.compile.invokedynamic=true, -XX:+HeapDumpOnOutOfMemoryError, -Djava.security.egd=file:/dev/urandom, -Dlog4j2.isThreadContextMapInheritable=true, -Djruby.regexp.interruptible=true, -Djdk.io.File.enableADS=true, --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED, --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED, --add-opens=java.base/java.security=ALL-UNNAMED, --add-opens=java.base/java.io=ALL-UNNAMED, --add-opens=java.base/java.nio.channels=ALL-UNNAMED, --add-opens=java.base/sun.nio.ch=ALL-UNNAMED, --add-opens=java.management/sun.management=ALL-UNNAMED, -Dio.netty.allocator.maxOrder=11]
+[INFO ] 2026-03-18 04:36:06.556 [main] StreamReadConstraintsUtil - Jackson default value override `logstash.jackson.stream-read-constraints.max-string-length` configured to `200000000` (logstash default)
+[INFO ] 2026-03-18 04:36:06.557 [main] StreamReadConstraintsUtil - Jackson default value override `logstash.jackson.stream-read-constraints.max-number-length` configured to `10000` (logstash default)
+[INFO ] 2026-03-18 04:36:06.557 [main] StreamReadConstraintsUtil - Jackson default value override `logstash.jackson.stream-read-constraints.max-nesting-depth` configured to `1000` (logstash default)
+[WARN ] 2026-03-18 04:36:07.253 [LogStash::Runner] multilocal - Ignoring the 'pipelines.yml' file because modules or command line options are specified
+[INFO ] 2026-03-18 04:36:10.343 [LogStash::Runner] Reflections - Reflections took 227 ms to scan 1 urls, producing 150 keys and 530 values
+[INFO ] 2026-03-18 04:36:11.423 [LogStash::Runner] javapipeline - Pipeline `main` is configured with `pipeline.ecs_compatibility: v8` setting. All plugins in this pipeline will default to `ecs_compatibility => v8` unless explicitly configured otherwise.
+Configuration OK
+[INFO ] 2026-03-18 04:36:11.424 [LogStash::Runner] runner - Using config.test_and_exit mode. Config Validation Result: OK. Exiting Logstash
+    검증 exit code: 0
+
+[5] 검증 성공! Logstash 재시작...

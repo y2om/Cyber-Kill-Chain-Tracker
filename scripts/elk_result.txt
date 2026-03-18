@@ -1,0 +1,47 @@
+==========================================
+ Phase 4: 로그 수집 및 파싱 검증 결과
+ 날짜: 2026.03.18
+==========================================
+
+▶ [1] 현재 log-* 인덱스 목록 및 문서 수:
+log-auditd-2026.03.18        188
+log-nginx_access-2026.03.15  115
+log-nginx_access-2026.03.18   22
+log-system-2026.03.15       9444
+log-system-2026.03.16         81
+log-system-2026.03.18       1816
+
+▶ [2] log-auditd 최신 로그 3건 (message 필드):
+  [1] type=SYSCALL msg=audit(1773806078.380:141): arch=c000003e syscall=1 success=yes exit=1 a0=3 a1=7ffc23c47850 a2=1 a3=0 items=0 ppid=712 pid=92919 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=19 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)ARCH=x86_64 SY
+  [2] type=PROCTITLE msg=audit(1773806078.380:141): proctitle=737368643A20726F6F74205B707269765D
+  [3] type=USER_LOGIN msg=audit(1773806080.196:143): pid=92978 uid=0 auid=0 ses=19 subj=unconfined msg='op=login id=0 exe="/usr/sbin/sshd" hostname=192.168.1.1 addr=192.168.1.1 terminal=/dev/pts/0 res=success'UID="root" AUID="root" ID="root"
+
+▶ [3] log-nginx_access 최신 로그 3건 (파싱 결과):
+  [1] client_ip=N/A method=N/A uri=N/A status=N/A
+  [2] client_ip=N/A method=N/A uri=N/A status=N/A
+  [3] client_ip=N/A method=N/A uri=N/A status=N/A
+
+▶ [4] log-nginx_access-2026.03.15 (기존 수집 데이터 파싱 확인):
+  [1] IP=N/A N/A 192.168.1.1 - - [15/Mar/2026:15:59:08 +0000] "POST /dvwa/vulnerabilities/exec/ H [N/A] tags=['beats_input_codec_plain_applied']
+  [2] IP=N/A N/A 192.168.1.1 - - [15/Mar/2026:15:58:06 +0000] "GET /dvwa/vulnerabilities/exec/ HT [N/A] tags=['beats_input_codec_plain_applied']
+  [3] IP=N/A N/A 192.168.1.1 - - [15/Mar/2026:15:35:08 +0000] "POST /dvwa/vulnerabilities/exec/ H [N/A] tags=['beats_input_codec_plain_applied']
+
+▶ [5] log-auditd에서 EXECVE 타입 이벤트 검색:
+  총 EXECVE 이벤트: 18건
+  [1] type=EXECVE msg=audit(1773804064.541:49): argc=3 a0="rm" a1="-f" a2="/tmp/aurules.fHuSAndA"
+  [2] type=EXECVE msg=audit(1773804064.549:50): argc=3 a0="/sbin/auditctl" a1="-R" a2="/etc/audit/audit.rules"
+  [3] type=SYSCALL msg=audit(1773804064.549:50): arch=c000003e syscall=59 success=yes exit=0 a0=56257dd110f8 a1=56257dd11160 a2=56257dd11180 a3=8 items=2 ppid=91954 pid=91964 auid=4294967295 uid=0 gid=0 eui
+  [4] type=SYSCALL msg=audit(1773804064.541:48): arch=c000003e syscall=59 success=yes exit=0 a0=56257dd10940 a1=56257dd108b0 a2=56257dd108f8 a3=8 items=2 ppid=91954 pid=91962 auid=4294967295 uid=0 gid=0 eui
+  [5] type=EXECVE msg=audit(1773804064.541:48): argc=4 a0="cmp" a1="-s" a2="/tmp/aurules.fHuSAndA" a3="/etc/audit/audit.rules"
+
+▶ [6] Logstash 파이프라인 통계 (처리량 확인):
+  Node: upc
+  - 처리된 문서: 0
+  - 실패한 문서: 0
+
+▶ [7] Filebeat 연결 상태 (Web 서버 → SIEM):
+  (ss 명령 사용불가)
+
+==========================================
+ 검증 완료
+==========================================

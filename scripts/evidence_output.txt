@@ -1,0 +1,24 @@
+=================================================
+ IR Report: 킬체인 기반 공격 시나리오 시뮬레이션
+=================================================
+
+## [단계 1: Initial Access & Execution] 웹 취약점 악용(Command Injection)
+
+## [단계 2: Execution] 시스템 명령어 실행 (Auditd log)
+[Auditd]
+- Time: 2026-03-18T04:59:03.403Z
+- MSG : type=EXECVE msg=audit(1773809938.808:901): argc=2 a0="grep" a1="/"
+- Time: 2026-03-18T04:59:03.403Z
+- MSG : type=EXECVE msg=audit(1773809938.852:911): argc=3 a0="grep" a1="-oP" a2="(?<=<pre>)[^<]+"
+- Time: 2026-03-18T04:59:03.403Z
+- MSG : type=EXECVE msg=audit(1773809938.856:913): argc=2 a0="head" a1="-10"
+
+## [단계 3: Persistence] Web Shell 업로드
+
+## [단계 4: Lateral Movement] DB 연동 파일 및 시스템 접근 시도
+[Lateral]
+- Time: 2026-03-18T04:59:03.403Z
+- MSG : type=EXECVE msg=audit(1773809938.864:914): argc=11 a0="curl" a1="-s" a2="-c" a3="/tmp/dvwa_cookie.txt" a4="-b" a5="/tmp/dvwa_cookie.txt" a6="http://19
+- Time: 2026-03-18T04:06:00.424Z
+- MSG : type=SYSCALL msg=audit(1773806750.696:271): arch=c000003e syscall=59 success=yes exit=0 a0=565356c47fc8 a1=565356c47ff0 a2=565356c48000 a3=a items=2 p
+

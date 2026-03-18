@@ -1,0 +1,7 @@
+#!/bin/bash
+# SSH 공개키를 authorized_keys에 등록
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDgnhd6Js3Aqn56lHYb1Xw2lJz9mzL8Zl2Tkp/HCJ02Y68OnxUZpc6IwIEfWcRCyN1vkFmyOHDWztSq2+e7+sxX7slIFeBatDveOp4kYLoK/8ZvLfyz8levlJ90M4mrCo77kUIDgPDi/yH1Ah2XJBtLcctKRKBNzKpWCH7SHh0HkUKzcCzI7Xp/URZB9gSQzmfYmHtAogfLjtrT4Y4YGAvNJEHknbas6+z8XoUdrGQ5iN0ZGUvcirltct+2twctSVcrE2Jm9lBwrzNFY2sdyfGSiV3WlF6nUQIKSMOyso3ziPSQf5PhH7FoMnapLoFOhr7hEL/SqXnCTx2MLQG+/TREoeq1474aAdm863DM1gonhm+JUbhIf9B5V0W98Sw4btoDaZ0iNKRo5rmLyBKd1RppxxBg8YBj1raDGFSuGWRcoqLCvQfP/cx43ISv3vBi0awrmtFwMK2l/kFXBQH5DYxn+0wo/+rj8R34cQcX+44LC/y2EkMOq2joHxnH9ZMCwHRuvgXVFDpUEju2ify+ZZwqdrip5YFupF8belQcOCGrzfodR9jPjDQ+eoC3HK6zAMWObBtFcTBWmE2bYFIVajl73sNFcXZ/7Bz1Y3fAh64mn+1npisG3cTWQrAclYlnBiz/ZD2M/Xo6z8VHCBPK2uJrRH4GfeXRt8S4G8IS2oQVww== ybhss@BOOK-TRN3PHOUFS" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+echo "SSH key registered successfully"
