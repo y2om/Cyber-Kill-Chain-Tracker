@@ -1,10 +1,12 @@
 # Cyber Kill Chain Tracker (ELK SIEM 기반 위협 탐지 프로젝트)
 
+
 ## 📌 프로젝트 소개
 EVE-NG 환경에서 웹, DB, SIEM 서버를 직접 구축하고, 가상의 해킹 시나리오(Cyber Kill Chain)를 수행하여 이를 실시간으로 탐지하는 파이프라인을 구현한 프로젝트입니다. 
 단순히 공격만 해보는 것이 아니라, **공격자의 행위가 시스템과 네트워크에 어떤 로그를 남기며, 이를 SIEM 환경에서 어떻게 필터링하고 모니터링할 수 있는지**를 검증하기 위해 기획했습니다.
 
 ## 🏗 인프라 구성 (Architecture)
+![Infrastructure](./Infra.png)
 *   **MGMT (SIEM):** 192.168.1.134 (내부 10.10.30.10) - ELK Stack (Elasticsearch, Logstash, Kibana)
 *   **DMZ (Web):** 192.168.1.131 (내부 10.10.10.10) - Nginx, PHP, DVWA, Filebeat, Auditd
 *   **Core (DB):** 192.168.1.133 (내부 10.10.20.10) - MariaDB, Filebeat, Auditd
